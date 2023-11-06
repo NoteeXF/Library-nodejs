@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detail Buku</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+
+        .book-details {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .book-details img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        p {
+            color: #555;
+        }
+
+        .availability {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .btn-borrow {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Detail Buku</h1>
+    <div class="book-details">
+        <h2>Judul Buku 1</h2>
+        <img src="book_image.jpg" alt="Gambar Buku">
+        <p>Penerbit: Penerbit 1</p>
+        <p>Harga: $20</p>
+        <p>Penulis: Penulis 1</p>
+        <p class="availability">Ketersediaan Buku: Tersedia</p>
+        <button class="btn-borrow">Pinjam Buku</button>
+    </div>
+    <a href="/books">Kembali ke Daftar Buku</a>
+</body>
+</html>

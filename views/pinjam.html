@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar Buku yang Dipinjam</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        li {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: calc(33.33% - 20px);
+            box-sizing: border-box;
+            transition: transform 0.2s;
+        }
+
+        li:hover {
+            transform: scale(1.02);
+        }
+
+        a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .return-button {
+            background-color: #FF5733;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Daftar Buku yang Dipinjam</h1>
+    <ul>
+        <li>
+            <a href="/books/1">Judul Buku 1</a>
+            <button class="return-button">Kembalikan Buku</button>
+        </li>
+        <li>
+            <a href="/books/2">Judul Buku 2</a>
+            <button class="return-button">Kembalikan Buku</button>
+        </li>
+        <li>
+            <a href="/books/3">Judul Buku 3</a>
+            <button class="return-button">Kembalikan Buku</button>
+        </li>
+    </ul>
+</body>
+</html>
