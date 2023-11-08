@@ -9,6 +9,10 @@ const User = db.define('user',{
     password: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    pinalti:{
+        type:DataTypes.DATE,
+        allownull: true
     }
 
 },{
