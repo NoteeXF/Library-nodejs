@@ -25,15 +25,16 @@ const pinjam = async (req, res) => {
       return res.status(404).json({ message: `buku dengan ID ${bookId} tidak ada`});
     }
     
-    if( book.Stock == 0 ){
+    if ( book.Stock == 0 ){
       return res.status(404).json ({ message:"buku tidak tersedia"});
     };
 
-    if( userId.pinalti  ){
-      const pinaltiend = new Date (userId.pinalti.getTime() + 3 * 24 * 60 * 60 * 1000),
-    };
+    const pinaltiend = new Date (userId.pinalti.getTime() + 3 * 24 * 60 * 60 * 1000);
+  
+    if ( pinaltiend.getTime() > new Date()){
+      return res.status(404).json ({ message: "masih mendapat hukuman"})
+    }
 
-    if( pinaltiend.getTime() >  )
     const borrowedcount = Borrower.count({
       where: { userId: userId }
     });
@@ -41,12 +42,17 @@ const pinjam = async (req, res) => {
     if( borrowedcount >= 1) {
       return res.status(400).json ({ message: "Pengguna hanya boleh meminjam 1 buku"})
     }
+    const borrowedDate = new Date()
+    const dueDate = new Date(borrowedDate.getTime() + 7 * 24 * 60 * 60 * 1000)
 
-    const borrower = await Borrower.create({
+    book.stock--
+
+    const borrower = await Borrower.save({
       userId:userId,
       bookId:bookId,
-      borrowedDate:new Date(),
-      dueDate:new Date (new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+      borrowedDate:borrowedDate,
+      dueDate: dueDate,
+      status: "belum dikembalikan"
     })
 
     console.log(`buku telah dipinjam ${userId.name}`);
@@ -62,23 +68,45 @@ const pinjam = async (req, res) => {
 
 const returnBooks = async(req,res) => {
 
-  const { bookId } = req.params;
-  
+    const { userId }  = req.body;
+    const { bookId } = req.params
+
   try {
-    const book = await Book.findByPk(bookId)
-    if(!book){
-      return res.status(404).json({ error: 'Buku tidak ditemukan'});
+
+    const user = await User.findByPk(userId);
+    const book = await Book.Books.findByPk(bookId);
+
+    if (!user) {
+      return res.status(404).json({ message:`nama dengan ID ${userId} tidak ada`});
     }
 
-    book.stock++
-    await book.save();
+    if (!book) {
+      return res.status(404).json({ message: `buku dengan ID ${bookId} tidak ada`});
+    }
+
+    const borrower = await Borrower.findOne({
+      where: {
+        userId:userId,
+        bookId:bookId,
+        returnDate:Borrower.dueDate,
+        status:Borrower.status,
+      }
+    })
+
+    if (!borrower){
+      return res.status(404).json({ message:"pengguna belum meminjam buku"});
+    }
+
+
+
+
 
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    
   }
-}
 
+}
 module.exports = {
   returnBooks,
   daftarpinjam,
