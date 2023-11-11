@@ -6,8 +6,10 @@ const borrowerController = require('../controller/borrowerController')
 
 router.post('/', bookController.createBooks);
 router.get('/get', bookController.getAllBooks);
-router.get('/get/:id', bookController.getAllBooksById);
-router.get('/daftar',borrowerController.daftarpinjam);
+router.get('/note/:id', bookController.getAllBooksById);
+router.post('/notee/pinjam/:id', borrowerController.pinjam);
+router.post('/notee/:id/return', borrowerController.returnBooks);
+
 
 
 module.exports = router ;

@@ -10,7 +10,7 @@ const User = db.define('user',{
         type: DataTypes.STRING,
         allowNull: false
     },
-    pinalti:{
+    pinalti_end:{
         type:DataTypes.DATE,
         allownull: true
     }

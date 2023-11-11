@@ -16,11 +16,7 @@ const Borrower = db.define('Borrower', {
 
   borrowedDate: DataTypes.DATE,
   dueDate: DataTypes.DATE,
-
-  status: {
-    type: DataTypes.STRING,
-    allowNull: false
-},
+  return_Date: DataTypes.DATE
   // Anda dapat menambahkan atribut lainnya seperti tanggal pengembalian, status, dll.
 });
 

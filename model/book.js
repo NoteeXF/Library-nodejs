@@ -19,7 +19,7 @@ const Books = db.define('book', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    Stock: {
+    stock: {
         type: DataTypes.INTEGER,
         allowNull: false
     }
