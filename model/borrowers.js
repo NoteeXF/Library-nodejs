@@ -32,12 +32,10 @@ const Borrower = db.define('Borrower', {
 
 Borrower.belongsTo(User, {
   foreignKey: 'userId',
-  onDelete: 'CASCADE',
 });
 
 Books.hasMany(Borrower, {
   foreignKey: 'bookId',
-  onDelete: 'CASCADE',
 });
 
 module.exports = {

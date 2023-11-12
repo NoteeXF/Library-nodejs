@@ -9,62 +9,66 @@ const { Books } = require('../model/book');
 // userId adalah ID pengguna yang meminjam
 // bookId adalah ID buku yang akan dipinjam
 const pinjam = async (req, res) => {
-  const { userId } = req.body; // Anggap userId dan bookId dikirimkan dalam body permintaan
-  const { bookId } = req.params.id;
+  const { userId, bookId } = req.body;
 
   try {
     // Periksa apakah pengguna dengan userId tertentu ada
-    const user = await User.findOne(userId);
+    const user = await User.findOne({userId});
     const book = await Books.findOne(bookId);
 
     if (!user) {
-      return res.status(404).json({ message:"nama  tidak ada" });
+      return res.status(404).json({ message: "User tidak ditemukan" });
     }
 
     if (!book) {
-      return res.status(404).json({ message: "buku tidak ada" });
+      return res.status(404).json({ message: "Buku tidak ditemukan" });
     }
-    
-    if ( book.stock === 0 ){
-      return res.status(404).json ({ message:"buku tidak tersedia"});
-    };
 
-    if(user.pinalti_end){
-      const pinaltiend = new Date (user.pinalti_end.getTime() + 3 * 24 * 60 * 60 * 1000);
+    if (book.stock === 0) {
+      return res.status(404).json({ message: "Buku tidak tersedia" });
+    }
 
-      if ( pinaltiend.getTime() > borrowedDate.getTime()){
-        return res.status(404).json ({ message: "masih mendapat hukuman"})
+    if (user.pinalti_end) {
+      const pinaltiend = new Date(user.pinalti_end.getTime() + 3 * 24 * 60 * 60 * 1000);
+
+      const borrowedDate = new Date();
+
+      if (pinaltiend.getTime() > borrowedDate.getTime()) {
+        return res.status(404).json({ message: "Masih mendapat hukuman" });
       }
     }
-    
 
-    if( Borrower.userId.length >= 1) {
-      return res.status(400).json ({ message: "Pengguna hanya boleh meminjam 1 buku"})
+    const borrowedCount = await Borrower.count({
+      where: { userId: user.id }
+    });
+
+    if (borrowedCount >= 2) {
+      return res.status(400).json({ message: "Pengguna hanya boleh meminjam 1 buku" });
     }
 
     const borrowedDate = new Date();
-    const dueDate = new Date (borrowedDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const dueDate = new Date(borrowedDate.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-    const borrower = new Borrower({
-      userId:User.id,
-      bookId:book.id,
-      borrowedDate:borrowedDate,
+     const borrower = await Borrower.create({
+      userId: user.id,
+      bookId: book.id,
+      borrowedDate: borrowedDate,
       dueDate: dueDate,
-      return_Date: dueDate,
-  });
+      returnDate: dueDate,
+    });
+
+    book.stock--;
 
     await borrower.save();
-    book.stock--
+    book.stock--;
 
-    console.log(`buku telah dipinjam ${user}`);
-    res.status(201).json ({ borrower })
-
+    console.log(`Buku telah dipinjam oleh ${user.name}`);
+    res.status(201).json({ borrower });
   } catch (error) {
     console.error(`Terjadi kesalahan: ${error.message}`);
     res.status(500).json({ error: 'Terjadi kesalahan saat meminjam buku.' });
   }
 }
-
 
 
 const returnBooks = async(req,res) => {
