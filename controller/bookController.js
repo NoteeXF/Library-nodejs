@@ -3,19 +3,19 @@ const { Books } = require("../model/book")
 
 const createBooks = async (req, res) => {
     try {
-        const { title, author, publisher, img, Stock } = req.body;
+        const { title, author, publisher, img, stock } = req.body;
         const book = new Books({
             title,
             author,
             publisher,
             img,
-            Stock
+            stock
         });
 
         await book.save();
         res.status(201).json(book);
     } catch (error) {
-        console.error("Terjadi kesalahan saat membuat produk:", error);
+       
         res.status(500).json({ error: "Terjadi kesalahan saat membuat produk" });
     }
 }
@@ -44,8 +44,42 @@ const getAllBooksById = async (req,res) => {
     }
 }
 
+const deletebook = async (req, res) => {
+    try {
+        const bookId = parseInt (req.params.id)
+         await this.Books.delete(bookId)
+         res.status(200).json({ message:"Buku berhasil dihapus" })
+        
+    } catch (error) {
+        res.status(500).json({error:"Terjadi kesalahan saat menghapus buku"})
+    }
+}
+
+const  update = async (req, res) => {
+    try {
+        const payload = req.body;
+        const id = parseInt(req.params.id);
+        const book = await this.Books.update({
+            where: { id: id },
+            data: {
+                title: payload.title,
+                author: payload.author,
+                publisher: payload.publisher,
+                img: payload.img,
+                stock: payload.stock
+            }
+        });
+        res.json(book);
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 module.exports = {
     createBooks,
     getAllBooks,
     getAllBooksById,
+    deletebook,
+    update
 }

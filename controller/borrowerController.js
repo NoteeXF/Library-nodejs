@@ -9,12 +9,17 @@ const { Books } = require('../model/book');
 // userId adalah ID pengguna yang meminjam
 // bookId adalah ID buku yang akan dipinjam
 const pinjam = async (req, res) => {
-  const { userId, bookId } = req.body;
+  const  id  = req.params.id
+  const { userId } = req.body;
+  
+                            
 
   try {
     // Periksa apakah pengguna dengan userId tertentu ada
-    const user = await User.findOne({userId});
-    const book = await Books.findOne(bookId);
+    const user = await User.findOne({ where: userId
+  });
+  
+  const book = await Books.findByPk(id);
 
     if (!user) {
       return res.status(404).json({ message: "User tidak ditemukan" });
@@ -29,11 +34,11 @@ const pinjam = async (req, res) => {
     }
 
     if (user.pinalti_end) {
-      const pinaltiend = new Date(user.pinalti_end.getTime() + 3 * 24 * 60 * 60 * 1000);
+      const pinaltiend = new Date(user.pinalti_end.getTime());
 
-      const borrowedDate = new Date();
+      const TimeDate = new Date();
 
-      if (pinaltiend.getTime() > borrowedDate.getTime()) {
+      if (pinaltiend.getTime() > TimeDate.getTime()) {
         return res.status(404).json({ message: "Masih mendapat hukuman" });
       }
     }
@@ -73,13 +78,13 @@ const pinjam = async (req, res) => {
 
 const returnBooks = async(req,res) => {
 
-    const { userId }  = req.body;
-    const { bookId } = req.params
+  const { userId, bookId } = req.body;
 
   try {
 
-    const user = await User.findByPk(userId);
-    const book = await Book.Books.findByPk(bookId);
+    const user = await User.findOne({ where: userId});
+  
+  const book = await User.findOne({ where: bookId });
 
     if (!user) {
       return res.status(404).json({ message:`nama dengan ID ${userId} tidak ada`});
@@ -91,8 +96,8 @@ const returnBooks = async(req,res) => {
 
     const borrower = await Borrower.findOne({
       where: {
-        userId:userId,
-        bookId:bookId,
+        userId:user.id,
+        bookId:book.id,
         status:Borrower.status,
       }
     })
