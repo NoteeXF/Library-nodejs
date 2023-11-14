@@ -12,7 +12,7 @@ router.post('/notee/pinjam/:id', borrowerController.pinjam);
 router.post('/notee/:id/return', borrowerController.returnBooks);
 router.post('/user', userController.createUser);
 router.get('/userall', userController.getAllUser);
-router.put('/notee/update/:id', bookController.update);
+router.put('/notee/update/:id', bookController.updatebook);
 router.delete('/notee/delete/:id', bookController.deletebook);
 
 

@@ -47,7 +47,9 @@ const getAllBooksById = async (req,res) => {
 const deletebook = async (req, res) => {
     try {
         const bookId = parseInt (req.params.id)
-         await this.Books.delete(bookId)
+         await Books.destroy({
+            where : { id:bookId }
+        })
          res.status(200).json({ message:"Buku berhasil dihapus" })
         
     } catch (error) {
@@ -55,31 +57,34 @@ const deletebook = async (req, res) => {
     }
 }
 
-const  update = async (req, res) => {
+
+const updatebook = async (req, res) => {
     try {
         const payload = req.body;
         const id = parseInt(req.params.id);
-        const book = await this.Books.update({
-            where: { id: id },
-            data: {
-                title: payload.title,
-                author: payload.author,
-                publisher: payload.publisher,
-                img: payload.img,
-                stock: payload.stock
-            }
+
+
+        const book = await Books.update({
+            title: payload.title,
+            author: payload.author,
+            publisher: payload.publisher,
+            img: payload.img,
+            stock: payload.stock
+        }, {
+            where: { id: id }
         });
+
         res.json(book);
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 module.exports = {
     createBooks,
     getAllBooks,
     getAllBooksById,
     deletebook,
-    update
+    updatebook,
 }
