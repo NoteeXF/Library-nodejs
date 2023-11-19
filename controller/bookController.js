@@ -80,6 +80,38 @@ const updatebook = async (req, res) => {
     }
 };
 
+const favoritBook = async (req, res) => {
+    try {
+  
+      let resMessage = "";
+  
+      const book = await Books.findByPk(req.params.id)
+  
+      if(!book) {
+        return res.status(404).json( { message: "buku tidak ada" } )
+      }
+  
+      const user = await User.findByPk(req.user.id)
+      const index = user.favorit.indexOf(book)
+      if( index == -1) {
+        user.favorit.push(book);
+        resMessage = "ditambahkan di favorite";
+            
+      } else {
+        user.favorit.splice(index, 1);
+        resMessage = "hapus dari favorite";
+      }
+  
+      await user.save()
+      res.status(200).json({ message:resMessage })
+  
+  
+  
+      
+    } catch (error) {
+      
+    }
+  }
 
 module.exports = {
     createBooks,
@@ -87,4 +119,5 @@ module.exports = {
     getAllBooksById,
     deletebook,
     updatebook,
+    favoritBook
 }

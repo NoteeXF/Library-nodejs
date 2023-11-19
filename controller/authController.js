@@ -1,4 +1,6 @@
 const{ User } = require("../model/user")
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const auth = async (req,res) => {
     try {
@@ -10,23 +12,29 @@ const auth = async (req,res) => {
         if (!user)
         return res.status(401).send({ message: "Invalid Name or Password" });
 
-        const validPassword = await bcrypt.compare(
+        const validPassword = await bcrypt.compareSync(
 			req.body.password,
 			user.password
 		);
-		if (!validPassword)
-			return res.status(401).send({ message: "Invalid Name or Password" });
+		if (!validPassword) {
+            return res.status(401).send({ message: "Invalid Name or Password" });
         
-        const token = jwt.sign({ _id: user._id }, "rahasia-rahasia"); // Ganti "rahasia-rahasia" dengan rahasia yang aman
+        };
 
-        // Kirim token ke klien
-        res.send({ token });
+        const token = jwt.sign(
+            { id: user.id },
+            process.env.JWTPRIVATEKEY,
+            { expiresIn: "7d" }
+        );
+        
+         return res.status(200).send({ token })
+			    
     } catch (error) {
         res.status(500).send({ message: "Internal Server Error" });
     }
 }
 
 module.exports = {
-    auth
+    auth,
 }
 

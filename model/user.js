@@ -13,7 +13,8 @@ const User = db.define('user',{
     pinalti_end:{
         type:DataTypes.DATE,
         allownull: true
-    }
+    },
+    
 
 },{
    freezeTableName: true 

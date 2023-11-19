@@ -2,24 +2,16 @@ const { Borrower } = require('../model/borrowers'); // Impor model Borrower
 const { User } = require('../model/user');
 const { Books } = require('../model/book');
 
-
-// ...
-
-// Contoh penggunaan untuk membuat peminjaman
-// userId adalah ID pengguna yang meminjam
-// bookId adalah ID buku yang akan dipinjam
 const pinjam = async (req, res) => {
-  const  id  = req.params.id
-  const { userId } = req.body;
+  const  bookid  = req.params.id 
+  const userid = req.userId  
   
-                            
 
   try {
     // Periksa apakah pengguna dengan userId tertentu ada
-    const user = await User.findOne({ where: userId
-  });
-  
-  const book = await Books.findByPk(id);
+    const user = await User.findByPk( userid );
+
+  const book = await Books.findByPk(bookid);
 
     if (!user) {
       return res.status(404).json({ message: "User tidak ditemukan" });
@@ -47,7 +39,7 @@ const pinjam = async (req, res) => {
       where: { userId: user.id }
     });
 
-    if (borrowedCount >= 2) {
+    if (borrowedCount >= 3) {
       return res.status(400).json({ message: "Pengguna hanya boleh meminjam 1 buku" });
     }
 
@@ -62,10 +54,10 @@ const pinjam = async (req, res) => {
       returnDate: dueDate,
     });
 
-    book.stock--;
+  await borrower.save();
 
-    await borrower.save();
-    book.stock--;
+   book.stock--
+   await book.save()
 
     console.log(`Buku telah dipinjam oleh ${user.name}`);
     res.status(201).json({ borrower });
@@ -78,13 +70,19 @@ const pinjam = async (req, res) => {
 
 const returnBooks = async(req,res) => {
 
-  const { userId, bookId } = req.body;
-
   try {
 
-    const user = await User.findOne({ where: userId});
+    const user = await User.findOne({ 
+      where: { 
+          id: req.params.id 
+         } 
+  });
   
-  const book = await User.findOne({ where: bookId });
+  const book = await Books.findOne({ 
+    where: { 
+        id: req.params.id 
+       } 
+});
 
     if (!user) {
       return res.status(404).json({ message:`nama dengan ID ${userId} tidak ada`});
@@ -137,6 +135,7 @@ const returnBooks = async(req,res) => {
       await borrower.save();
 
       book.stock++
+      await book.save();
     }
 
     res.status(200).json({ message: "buku berhasil dikembalikan"})
@@ -148,7 +147,14 @@ const returnBooks = async(req,res) => {
   }
 
 }
+
+
+
+
+
+
 module.exports = {
   returnBooks,
   pinjam,
+  
 }
