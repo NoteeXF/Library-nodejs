@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const Books = require("./routes/bookrouter")
+require('dotenv').config();
 
 
 app.use(express.json());

@@ -3,15 +3,19 @@ const { User } = require('../model/user');
 const { Books } = require('../model/book');
 
 const pinjam = async (req, res) => {
-  const  bookid  = req.params.id 
-  const userid = req.userId  
-  
+  const bookid = req.params.id;
+  const userid = req.userId
 
   try {
-    // Periksa apakah pengguna dengan userId tertentu ada
-    const user = await User.findByPk( userid );
+    console.log(userid); // Tambahkan ini untuk melihat nilai userid di konsol
 
-  const book = await Books.findByPk(bookid);
+    const user = await User.findOne({
+      where: {
+        id:userid
+      },
+    });
+
+    const book = await Books.findByPk(bookid);
 
     if (!user) {
       return res.status(404).json({ message: "User tidak ditemukan" });
@@ -27,7 +31,6 @@ const pinjam = async (req, res) => {
 
     if (user.pinalti_end) {
       const pinaltiend = new Date(user.pinalti_end.getTime());
-
       const TimeDate = new Date();
 
       if (pinaltiend.getTime() > TimeDate.getTime()) {
@@ -36,36 +39,42 @@ const pinjam = async (req, res) => {
     }
 
     const borrowedCount = await Borrower.count({
-      where: { userId: user.id }
+      where: { userId: user.id },
     });
 
     if (borrowedCount >= 3) {
-      return res.status(400).json({ message: "Pengguna hanya boleh meminjam 1 buku" });
+      return res
+        .status(400)
+        .json({ message: "Pengguna hanya boleh meminjam 1 buku" });
     }
 
     const borrowedDate = new Date();
     const dueDate = new Date(borrowedDate.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-     const borrower = await Borrower.create({
-      userId: user.id,
-      bookId: book.id,
+    const borrower = await Borrower.create({
+      userId: req.userId, // Gunakan user ID dari JWT
+      bookId: book, // Perbaiki penggunaan bookid di sini
       borrowedDate: borrowedDate,
       dueDate: dueDate,
       returnDate: dueDate,
     });
 
-  await borrower.save();
 
-   book.stock--
-   await book.save()
+    book.stock--;
+    await book.save();
 
     console.log(`Buku telah dipinjam oleh ${user.name}`);
     res.status(201).json({ borrower });
+    
   } catch (error) {
     console.error(`Terjadi kesalahan: ${error.message}`);
-    res.status(500).json({ error: 'Terjadi kesalahan saat meminjam buku.' });
+    res
+      .status(500)
+      .json({ error: "Terjadi kesalahan saat meminjam buku." });
   }
-}
+};
+
+
 
 
 const returnBooks = async(req,res) => {

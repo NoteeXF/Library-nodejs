@@ -1,24 +1,41 @@
 const { User } = require("../model/user");
-
+const bcrypt = require("bcrypt");
 
 
 const createUser = async (req, res) => {
     try {
-        const { name, password } = req.body;
+        // Cek apakah nama pengguna sudah ada
+        const sameUser = await User.findOne({
+            where: {
+                name: req.body.name
+            }
+        });
+        if (sameUser) {
+            return res.status(404).json({ sameUser });
+        }
+        
+        if (sameUser) {
+            return res.status(404).json({ message: "Nama pengguna sudah ada" });
+        }
 
-        if(name == ser )
-        const user = new User ({
-            name,
-            password
-        })
+        
+        // Generate salt dan hash password
+        const salt = await bcrypt.genSalt(Number(process.env.SALT));
+        const hashPassword = await bcrypt.hash(req.body.password, salt);
 
-        await user.save();
-        res.status(201).json(user)
+        // Buat objek User baru
+        const newUser = await User.create({
+            name: req.body.name,
+            password: hashPassword,
+        });
+
+        res.status(201).json({  newUser });
     } catch (error) {
-        console.error("Terjadi kesalahan saat membuat produk:", error);
+        console.error("Terjadi kesalahan saat membuat user:", error);
         res.status(500).json({ error: "Terjadi kesalahan saat membuat user" });
     }
-}
+};
+
 
 const getAllUser = async (req,res) => {
     try {
